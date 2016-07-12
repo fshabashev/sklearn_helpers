@@ -6,7 +6,7 @@ from sklearn.pipeline import _fit_transform_one, _transform_one
 
 class FeatureDictionary(FeatureUnion):
     def __init__(self, transformer_list, n_jobs=1, transformer_weights=None):
-        super(FeatureDictionary, self).__init__(self, transformer_list, n_jobs, transformer_weights)
+        super(FeatureDictionary, self).__init__(transformer_list, n_jobs, transformer_weights)
 
     def fit_transform(self, X, y=None, **fit_params):
         """Fit all transformers using X, transform the data and concatenate
@@ -29,7 +29,7 @@ class FeatureDictionary(FeatureUnion):
 
         Xs, transformers = zip(*result)
         self._update_transformer_list(transformers)
-        names, _ = self.tranformer_list
+        names, _ = zip(*self.transformer_list)
 
         named_transformed_data = [(name, transformed_data) for name, transformed_data in izip(names, Xs)]
         return named_transformed_data
@@ -50,6 +50,6 @@ class FeatureDictionary(FeatureUnion):
         Xs = Parallel(n_jobs=self.n_jobs)(
             delayed(_transform_one)(trans, name, X, self.transformer_weights)
             for name, trans in self.transformer_list)
-        names, _ = self.tranformer_list
+        names, _ = zip(*self.transformer_list)
         named_transformed_data = [(name, transformed_data) for name, transformed_data in izip(names, Xs)]
         return named_transformed_data
